@@ -4,7 +4,7 @@ import { analyzeSentiment } from "../services/geminiService.js";
 import Comment from "../models/commentSchema.js";
 import pLimit from "p-limit";
 
-// Interface definitions remain the same
+
 interface CommentData {
   commentId: string;
   text: string;
@@ -28,10 +28,8 @@ interface YouTubeComment {
   publishedAt: string | null | undefined;
 }
 
-// Helper function to add delay (in ms)
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// Caching sentiment results to reduce duplicate API calls
 const sentimentCache = new Map<string, string>();
 
 async function getSentimentWithCache(comment: string, videoTitle: string): Promise<string> {
@@ -41,7 +39,6 @@ async function getSentimentWithCache(comment: string, videoTitle: string): Promi
   }
   const sentiment = await analyzeSentiment(comment, videoTitle);
   sentimentCache.set(key, sentiment);
-  // Remove the cached result after 10 minutes
   setTimeout(() => sentimentCache.delete(key), 10 * 60 * 1000);
   return sentiment;
 }
@@ -54,7 +51,6 @@ export const analyzeVideoComments = async (req: Request, res: Response) => {
       return res.status(400).json({ error: "Video URL is required" });
     }
 
-    // Extract video ID from URL
     const videoIdMatch = videoUrl.match(
       /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/
     );
@@ -63,26 +59,18 @@ export const analyzeVideoComments = async (req: Request, res: Response) => {
     }
     const videoId = videoIdMatch[1];
 
-    // Fetch comments from YouTube
     const comments: YouTubeComment[] = await fetchVideoComments(videoId);
 
-    // Use p-limit to throttle concurrent sentiment analysis calls (limit to 2 concurrent requests)
     const limit = pLimit(2);
 
-    // Process all comments with concurrency control
     const analyzedComments: AnalyzedComment[] = await Promise.all(
       comments.map((comment: YouTubeComment) =>
         limit(async () => {
-          // Ensure comment text is defined
           const commentText = comment.text || "";
-
-          // Add an extra delay (500ms) before each API call to help reduce rate limit hits
           await delay(500);
 
-          // Use caching to avoid duplicate API calls
           const sentiment = await getSentimentWithCache(commentText, videoTitle);
 
-          // Use a default username if missing
           const username =
             comment.username && comment.username.trim() ? comment.username : "Anonymous";
           const maskedUsername =
@@ -90,16 +78,12 @@ export const analyzeVideoComments = async (req: Request, res: Response) => {
               ? `${username.substring(0, 2)}${"*".repeat(username.length - 2)}`
               : username;
 
-          // Ensure commentId is a string
           const commentId =
             comment.commentId ||
-            // `comment_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
             `comment_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
 
-          // Safe handling of publishedAt
           const publishedAt = comment.publishedAt || new Date().toISOString();
 
-          // Save to database
           const newComment = new Comment({
             videoId,
             commentId,
@@ -127,14 +111,12 @@ export const analyzeVideoComments = async (req: Request, res: Response) => {
       )
     );
 
-    // Generate analysis results (sentiment distribution)
     const sentimentDistribution = {
       agree: analyzedComments.filter((c) => c.sentiment === "agree").length,
       disagree: analyzedComments.filter((c) => c.sentiment === "disagree").length,
       neutral: analyzedComments.filter((c) => c.sentiment === "neutral").length,
     };
 
-    // Calculate monthly distribution
     const monthlyDistribution: Record<string, number> = {};
     analyzedComments.forEach((comment) => {
       let date: Date;
@@ -148,7 +130,6 @@ export const analyzeVideoComments = async (req: Request, res: Response) => {
       monthlyDistribution[monthYear] = (monthlyDistribution[monthYear] || 0) + 1;
     });
 
-    // Extract top keywords
     const keywords = extractKeywords(
       analyzedComments.map((c) => c.text).filter(Boolean)
     );
@@ -166,7 +147,6 @@ export const analyzeVideoComments = async (req: Request, res: Response) => {
   }
 };
 
-// Helper function to extract keywords (unchanged)
 function extractKeywords(texts: string[]): string[] {
   const commonWords = [
     "the",
