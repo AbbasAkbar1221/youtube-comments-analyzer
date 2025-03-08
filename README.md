@@ -79,18 +79,10 @@ npm run dev
 
 ### 1️⃣ Fetching YouTube Comments
 - The **YouTube API** is used to get video comments.
-- The backend makes a `GET` request to:
-  ```bash
-  https://www.googleapis.com/youtube/v3/commentThreads
-  ```
   with the `videoId` and `part=snippet`.
 
 ### 2️⃣ Sentiment Analysis (Gemini API)
 - Each comment is sent to **Google Gemini AI API** for sentiment analysis.
-- API endpoint:
-  ```bash
-  https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateText?key=GEMINI_API_KEY
-  ```
 - The response categorizes comments as **Agree, Neutral, or Disagree**.
 
 ### 3️⃣ Data Processing & Visualization
