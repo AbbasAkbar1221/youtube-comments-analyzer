@@ -1,10 +1,10 @@
-// src/components/YouTubeAnalyzer.tsx
 import React, { useState } from 'react';
 import axios from 'axios';
 import SentimentDistribution from './SentimentDistribution';
 import CommentStatistics from './CommentStatistics';
 import MonthlyDistribution from './MonthlyDistribution';
 import TopKeywords from './TopKeywords';
+import LoadingSpinner from './LoadingSpinner';
 
 
 const YouTubeAnalyzer: React.FC = () => {
@@ -65,6 +65,7 @@ const YouTubeAnalyzer: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+        {loading && <LoadingSpinner />}
       <div className="bg-white rounded-lg p-6 shadow-md mb-8">
         <h1 className="text-2xl font-bold text-purple-700 mb-6">YouTube Comments Analyzer</h1>
         

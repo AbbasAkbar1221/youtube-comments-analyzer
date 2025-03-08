@@ -30,8 +30,6 @@ mongoose
 // Routes
 app.use("/api", analysisRoutes);
 
-// "dev": "cross-env NODE_OPTIONS=--loader=ts-node/esm nodemon ./src/index.ts",
-
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
