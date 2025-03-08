@@ -26,7 +26,6 @@ const YouTubeAnalyzer: React.FC = () => {
 
     try {
       const response = await axios.post(`${API_URL}/api/analyze`, { videoUrl });
-      console.log(response.data);
       setAnalysisData(response.data);
     } catch (err) {
       console.error('Error analyzing video:', err);
