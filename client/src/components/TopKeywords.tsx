@@ -1,5 +1,3 @@
-
-// src/components/TopKeywords.tsx
 import React from 'react';
 
 type TopKeywordsProps = {

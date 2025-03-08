@@ -1,4 +1,3 @@
-// src/components/MonthlyDistribution.tsx
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
 import { 
@@ -11,7 +10,6 @@ import {
   Legend 
 } from 'chart.js';
 
-// Register ChartJS components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 type MonthlyDistributionProps = {
@@ -19,11 +17,11 @@ type MonthlyDistributionProps = {
 };
 
 const MonthlyDistribution: React.FC<MonthlyDistributionProps> = ({ data }) => {
-  // Sort the data by date
+
   const sortedData = Object.entries(data)
     .sort(([dateA], [dateB]) => new Date(dateA).getTime() - new Date(dateB).getTime());
   
-  // Convert YYYY-MM format to Month names
+
   const months = sortedData.map(([date]) => {
     const [year, month] = date.split('-');
     const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];

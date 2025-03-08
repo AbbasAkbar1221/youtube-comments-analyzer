@@ -1,10 +1,10 @@
-// src/components/YouTubeAnalyzer.tsx
 import React, { useState } from 'react';
 import axios from 'axios';
 import SentimentDistribution from './SentimentDistribution';
 import CommentStatistics from './CommentStatistics';
 import MonthlyDistribution from './MonthlyDistribution';
 import TopKeywords from './TopKeywords';
+import LoadingSpinner from './LoadingSpinner';
 
 
 const YouTubeAnalyzer: React.FC = () => {
@@ -12,6 +12,8 @@ const YouTubeAnalyzer: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [analysisData, setAnalysisData] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const handleAnalyze = async () => {
     if (!videoUrl) {
@@ -23,7 +25,8 @@ const YouTubeAnalyzer: React.FC = () => {
     setError(null);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/analyze', { videoUrl });
+      const response = await axios.post(`${API_URL}/api/analyze`, { videoUrl });
+      console.log(response.data);
       setAnalysisData(response.data);
     } catch (err) {
       console.error('Error analyzing video:', err);
@@ -36,7 +39,7 @@ const YouTubeAnalyzer: React.FC = () => {
   const handleExportCSV = () => {
     if (!analysisData || !analysisData.comments) return;
 
-    // Create CSV content
+    
     const headers = ['Comment', 'Username', 'Date', 'Sentiment'];
     const csvRows = [
       headers.join(','),
@@ -54,7 +57,7 @@ const YouTubeAnalyzer: React.FC = () => {
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     
-    // Create download link
+    
     const link = document.createElement('a');
     link.setAttribute('href', url);
     link.setAttribute('download', 'youtube_comments_analysis.csv');
@@ -65,6 +68,7 @@ const YouTubeAnalyzer: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+        {loading && <LoadingSpinner />}
       <div className="bg-white rounded-lg p-6 shadow-md mb-8">
         <h1 className="text-2xl font-bold text-purple-700 mb-6">YouTube Comments Analyzer</h1>
         

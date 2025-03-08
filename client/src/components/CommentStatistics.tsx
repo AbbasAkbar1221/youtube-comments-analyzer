@@ -1,4 +1,3 @@
-// src/components/CommentStatistics.tsx
 import React from 'react';
 
 type CommentStatisticsProps = {
