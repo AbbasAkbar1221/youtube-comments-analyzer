@@ -1,4 +1,3 @@
-// src/components/SentimentDistribution.tsx
 import React from 'react';
 
 type SentimentDistributionProps = {
@@ -64,8 +63,3 @@ const SentimentDistribution: React.FC<SentimentDistributionProps> = ({ data }) =
 };
 
 export default SentimentDistribution;
-
-
-
-
-// export { SentimentDistribution, CommentStatistics, MonthlyDistribution, TopKeywords };
